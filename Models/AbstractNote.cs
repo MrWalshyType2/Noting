@@ -11,12 +11,12 @@ namespace Noting.Models
         public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ICollection<string> Keywords { get; set; }
+        public ICollection<Keyword> Keywords { get; set; }
         public string Topic { get; set; }
         public string Subtopic { get; set; }
         public SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
         public bool AutomaticIdLinking { get; set; }
-        public ICollection<string> LinkedNoteIds { get; set; }
+        public ICollection<T> LinkedNoteIds { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime CreatedAt { get; set; }

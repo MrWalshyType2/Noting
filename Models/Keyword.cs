@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Noting.Models
 {
-    public class SpacedRepetitionHistory
+    public class Keyword
     {
         public string Id { get; set; }
+        public string Name { get; set; }
     }
 }
