@@ -19,27 +19,10 @@ namespace Noting.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("Noting.Models.Keyword", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NoteId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NoteId");
-
-                    b.ToTable("Keyword");
-                });
-
             modelBuilder.Entity("Noting.Models.Note", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("AutomaticIdLinking")
@@ -54,12 +37,6 @@ namespace Noting.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NoteId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SpacedRepetitionHistoryId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Subtopic")
                         .HasColumnType("nvarchar(max)");
 
@@ -71,48 +48,47 @@ namespace Noting.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NoteId");
-
-                    b.HasIndex("SpacedRepetitionHistoryId");
-
                     b.ToTable("Note");
                 });
 
-            modelBuilder.Entity("Noting.Models.SpacedRepetitionHistory", b =>
+            modelBuilder.Entity("Noting.Models.NoteRelation", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("ParentId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("ChildId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("SpacedRepetitionHistory");
+                    b.Property<string>("ParentId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ParentId");
+
+                    b.HasIndex("ParentId1");
+
+                    b.ToTable("NoteRelation");
                 });
 
-            modelBuilder.Entity("Noting.Models.Keyword", b =>
+            modelBuilder.Entity("Noting.Models.NoteRelation", b =>
                 {
-                    b.HasOne("Noting.Models.Note", null)
-                        .WithMany("Keywords")
-                        .HasForeignKey("NoteId");
-                });
+                    b.HasOne("Noting.Models.Note", "Child")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            modelBuilder.Entity("Noting.Models.Note", b =>
-                {
-                    b.HasOne("Noting.Models.Note", null)
-                        .WithMany("LinkedNoteIds")
-                        .HasForeignKey("NoteId");
-
-                    b.HasOne("Noting.Models.SpacedRepetitionHistory", "SpacedRepetitionHistory")
+                    b.HasOne("Noting.Models.Note", "Parent")
                         .WithMany()
-                        .HasForeignKey("SpacedRepetitionHistoryId");
+                        .HasForeignKey("ParentId1");
 
-                    b.Navigation("SpacedRepetitionHistory");
+                    b.Navigation("Child");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Noting.Models.Note", b =>
                 {
-                    b.Navigation("Keywords");
-
-                    b.Navigation("LinkedNoteIds");
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

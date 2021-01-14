@@ -28,7 +28,7 @@ namespace Noting
             services.AddControllersWithViews();
 
             services.AddDbContext<MvcNoteContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MvcItemContext")));
+                options.UseSqlServer(Configuration.GetConnectionString("MvcNoteContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
