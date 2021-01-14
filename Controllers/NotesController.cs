@@ -28,28 +28,19 @@ namespace Noting.Controllers
         // GET: Notes/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var note = await _context.Note
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                     .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (note == null)
-            {
-                return NotFound();
-            }
+            if (note == null) return NotFound();
 
             var relations = from noteRel in _context.NoteRelation
                             where noteRel.ParentId == id
                             select noteRel;
 
-            note.Children = await relations.ToListAsync();
-            
-
             // ICollection<NoteRelation>
-            //note.Children = await children.ToListAsync();
+            note.Children = await relations.ToListAsync();
 
             return View(note);
         }
