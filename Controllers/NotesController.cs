@@ -36,35 +36,11 @@ namespace Noting.Controllers
             if (note == null) return NotFound();
 
             note.Children = await GetLinkedNoteRelations(id);
-
-            List<SpacedRepetitionHistory> histories = null;
-            SpacedRepetitionHistory history = null;
-            try
+            note.SpacedRepetitionHistory = await GetHistoryByNoteId(id);
+            if (note.SpacedRepetitionHistory != null)
             {
-                if (await _context.SpacedRepetitionHistories.AnyAsync())
-                {
-                    histories = await (from h in _context.SpacedRepetitionHistories
-                                       where h.NoteId == note.Id
-                                       select h).ToListAsync();
-                }
-                history = histories.ElementAtOrDefault(0);
+                note.SpacedRepetitionHistory.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(id);
             }
-            catch (Exception e) { }
-
-            List<SpacedRepetitionAttempt> attempts = null;
-            try
-            {
-                if (await _context.SpacedRepetitionAttempts.AnyAsync() && history != null)
-                {
-                    attempts = await (from a in _context.SpacedRepetitionAttempts
-                                      where a.SpacedRepetitionHistoryId == history.Id
-                                      select a).ToListAsync();
-                    history.SpacedRepetitionAttempts = attempts;
-                }
-                if (history != null) note.SpacedRepetitionHistory = history;
-            }
-            catch (Exception e) { }
-
             return View(note);
         }
 
@@ -183,6 +159,40 @@ namespace Noting.Controllers
                             select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
             
             return await relations.ToListAsync();
+        }
+
+        async private Task<ICollection<SpacedRepetitionAttempt>> GetAttemptsByHistoryId(string id)
+        {
+            List<SpacedRepetitionAttempt> attempts = null;
+            try
+            {
+                if (await _context.SpacedRepetitionAttempts.AnyAsync() && id != null)
+                {
+                    attempts = await (from a in _context.SpacedRepetitionAttempts
+                                      where a.SpacedRepetitionHistoryId == id
+                                      select a).ToListAsync();
+                }
+            }
+            catch (Exception e) { }
+            return attempts;
+        }
+
+        async private Task<SpacedRepetitionHistory> GetHistoryByNoteId(string id)
+        {
+            List<SpacedRepetitionHistory> histories = null;
+            SpacedRepetitionHistory history = null;
+            try
+            {
+                if (await _context.SpacedRepetitionHistories.AnyAsync())
+                {
+                    histories = await (from h in _context.SpacedRepetitionHistories
+                                       where h.NoteId == id
+                                       select h).ToListAsync();
+                }
+                history = histories.ElementAtOrDefault(0);
+            }
+            catch (Exception e) { }
+            return history;
         }
     }
 }
