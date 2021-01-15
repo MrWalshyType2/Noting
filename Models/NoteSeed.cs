@@ -61,21 +61,23 @@ namespace Noting.Models
                                where note.Topic == "Projects"
                                select note).ToList();
 
+            var targetNote = projectNotes[0];
+
             noteContext.NoteRelation.AddRange(
                 new NoteRelation
                 {
-                    ParentId = projectNotes[0].Id,
+                    ParentId = targetNote.Id,
                     ChildId = projectNotes[1].Id
                 },
                 new NoteRelation
                 {
-                    ParentId = projectNotes[0].Id,
+                    ParentId = targetNote.Id,
                     ChildId = projectNotes[2].Id
                 },
                 new NoteRelation
                 {
                     ParentId = projectNotes[1].Id,
-                    ChildId = projectNotes[0].Id
+                    ChildId = targetNote.Id
                 },
                 new NoteRelation
                 {
@@ -85,7 +87,7 @@ namespace Noting.Models
                 new NoteRelation
                 {
                     ParentId = projectNotes[2].Id,
-                    ChildId = projectNotes[0].Id
+                    ChildId = targetNote.Id
                 },
                 new NoteRelation
                 {
@@ -99,7 +101,7 @@ namespace Noting.Models
             noteContext.SpacedRepetitionHistories.Add(
                 new SpacedRepetitionHistory
                 {
-                    NoteId = projectNotes[0].Id,
+                    NoteId = targetNote.Id,
                     NextScheduledAttempt = DateTime.Now.Date,
                     Question = "What is the x of n?",
                 }
@@ -108,7 +110,7 @@ namespace Noting.Models
             await noteContext.SaveChangesAsync();
 
             var noteRepHistQuery = from n in noteContext.SpacedRepetitionHistories
-                                   where n.NoteId == projectNotes[0].Id
+                                   where n.NoteId == targetNote.Id
                                    select n;
 
             var noteRepHist = (await noteRepHistQuery.ToListAsync())[0];

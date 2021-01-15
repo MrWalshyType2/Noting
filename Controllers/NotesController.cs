@@ -28,18 +28,20 @@ namespace Noting.Controllers
         // GET: Notes/Details/5
         public async Task<IActionResult> Details(string id)
         {
+            // Check if 'id' is not null, and that a 'note' can be found in the DB
             if (id == null) return NotFound();
-
             var note = await _context.Note
                                      .FirstOrDefaultAsync(m => m.Id == id);
-
             if (note == null) return NotFound();
 
+            // Set children and spaced repetition history
             note.Children = await GetLinkedNoteRelations(id);
             note.SpacedRepetitionHistory = await GetHistoryByNoteId(id);
             if (note.SpacedRepetitionHistory != null)
             {
-                note.SpacedRepetitionHistory.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(id);
+                // Set the spaced repetition histories attempts
+                note.SpacedRepetitionHistory.SpacedRepetitionAttempts = 
+                    await GetAttemptsByHistoryId(note.SpacedRepetitionHistory.Id);
             }
             return View(note);
         }
