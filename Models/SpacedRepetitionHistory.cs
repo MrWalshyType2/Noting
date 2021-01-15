@@ -17,6 +17,7 @@ namespace Noting.Models
         public string Question { get; set; }
 
         public ICollection<SpacedRepetitionAttempt> SpacedRepetitionAttempts { get; set; }
+        [NotMapped]
         public SpacedRepetitionAttempt LastAttempt { get; set; }
         public DateTime NextScheduledAttempt { get; set; }
     }

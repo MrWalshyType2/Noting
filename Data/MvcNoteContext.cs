@@ -33,14 +33,14 @@ namespace Noting.Data
 
                 modelBuilder.Entity<SpacedRepetitionHistory>()
                             .HasMany(x => x.SpacedRepetitionAttempts)
-                            .WithOne(x => x.SpacedRepetitionHistory)
+                            .WithOne()
                             .HasForeignKey(x => x.SpacedRepetitionHistoryId)
                             .OnDelete(DeleteBehavior.Restrict);
 
-                //modelBuilder.Entity<SpacedRepetitionAttempt>()
-                  //          .HasOne(x => x.SpacedRepetitionHistory)
-                    //        .WithMany(x => x.SpacedRepetitionAttempts)
-                      //      .HasForeignKey(x => x.SpacedRepetitionHistoryId);
+                modelBuilder.Entity<SpacedRepetitionAttempt>()
+                            .HasOne(x => x.SpacedRepetitionHistory)
+                            .WithMany(x => x.SpacedRepetitionAttempts);
+                            //.HasForeignKey(x => x.SpacedRepetitionHistoryId);
 
                 modelBuilder.Entity<Note>()
                             .HasOne(x => x.SpacedRepetitionHistory)

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noting.Data;
 
 namespace Noting.Migrations
 {
     [DbContext(typeof(MvcNoteContext))]
-    partial class MvcNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20210115170345_ContextUpdate")]
+    partial class ContextUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,9 +87,16 @@ namespace Noting.Migrations
                     b.Property<string>("SpacedRepetitionHistoryId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("SpacedRepetitionHistoryId2")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SpacedRepetitionHistoryId");
+
+                    b.HasIndex("SpacedRepetitionHistoryId2")
+                        .IsUnique()
+                        .HasFilter("[SpacedRepetitionHistoryId2] IS NOT NULL");
 
                     b.ToTable("SpacedRepetitionAttempts");
                 });
@@ -133,6 +142,10 @@ namespace Noting.Migrations
                         .HasForeignKey("SpacedRepetitionHistoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Noting.Models.SpacedRepetitionHistory", null)
+                        .WithOne("LastAttempt")
+                        .HasForeignKey("Noting.Models.SpacedRepetitionAttempt", "SpacedRepetitionHistoryId2");
+
                     b.Navigation("SpacedRepetitionHistory");
                 });
 
@@ -154,6 +167,8 @@ namespace Noting.Migrations
 
             modelBuilder.Entity("Noting.Models.SpacedRepetitionHistory", b =>
                 {
+                    b.Navigation("LastAttempt");
+
                     b.Navigation("SpacedRepetitionAttempts");
                 });
 #pragma warning restore 612, 618
