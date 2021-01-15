@@ -93,6 +93,41 @@ namespace Noting.Models
                     ChildId = projectNotes[1].Id
                 }
             );
+
+            await noteContext.SaveChangesAsync();
+
+            noteContext.SpacedRepetitionHistories.Add(
+                new SpacedRepetitionHistory
+                {
+                    NoteId = projectNotes[0].Id,
+                    NextScheduledAttempt = DateTime.Now.Date,
+                    Question = "What is the x of n?",
+                }
+            );
+
+            await noteContext.SaveChangesAsync();
+
+            var noteRepHistQuery = from n in noteContext.SpacedRepetitionHistories
+                                   where n.NoteId == projectNotes[0].Id
+                                   select n;
+
+            var noteRepHist = (await noteRepHistQuery.ToListAsync())[0];
+
+            noteContext.SpacedRepetitionAttempts.AddRange(
+                new SpacedRepetitionAttempt
+                {
+                    SpacedRepetitionHistoryId = noteRepHist.Id,
+                    AttemptDate = DateTime.Parse("03/01/2021"),
+                    Correct = false
+                },
+                new SpacedRepetitionAttempt
+                {
+                    SpacedRepetitionHistoryId = noteRepHist.Id,
+                    AttemptDate = DateTime.Parse("07/01/2021"),
+                    Correct = true
+                }
+            );
+
             await noteContext.SaveChangesAsync();
             noteContextTransaction.Commit();
         }

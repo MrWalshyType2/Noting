@@ -37,6 +37,34 @@ namespace Noting.Controllers
 
             note.Children = await GetLinkedNoteRelations(id);
 
+            List<SpacedRepetitionHistory> histories = null;
+            SpacedRepetitionHistory history = null;
+            try
+            {
+                if (await _context.SpacedRepetitionHistories.AnyAsync())
+                {
+                    histories = await (from h in _context.SpacedRepetitionHistories
+                                       where h.NoteId == note.Id
+                                       select h).ToListAsync();
+                }
+                history = histories.ElementAtOrDefault(0);
+            }
+            catch (Exception e) { }
+
+            List<SpacedRepetitionAttempt> attempts = null;
+            try
+            {
+                if (await _context.SpacedRepetitionAttempts.AnyAsync() && history != null)
+                {
+                    attempts = await (from a in _context.SpacedRepetitionAttempts
+                                      where a.SpacedRepetitionHistoryId == history.Id
+                                      select a).ToListAsync();
+                    history.SpacedRepetitionAttempts = attempts;
+                }
+                if (history != null) note.SpacedRepetitionHistory = history;
+            }
+            catch (Exception e) { }
+
             return View(note);
         }
 

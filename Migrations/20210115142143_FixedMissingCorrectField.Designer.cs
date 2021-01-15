@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noting.Data;
 
 namespace Noting.Migrations
 {
     [DbContext(typeof(MvcNoteContext))]
-    partial class MvcNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20210115142143_FixedMissingCorrectField")]
+    partial class FixedMissingCorrectField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

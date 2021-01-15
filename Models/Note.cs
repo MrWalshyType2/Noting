@@ -18,7 +18,7 @@ namespace Noting.Models
         //public ICollection<Keyword> Keywords { get; set; }
         public string Topic { get; set; }
         public string Subtopic { get; set; }
-        //public SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
+        public SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
         public bool AutomaticIdLinking { get; set; }
 
         //[Column("LinkedNotes")]

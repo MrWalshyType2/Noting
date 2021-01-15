@@ -30,10 +30,28 @@ namespace Noting.Data
                 modelBuilder.Entity<Note>()
                             .HasMany(x => x.Children)
                             .WithOne(x => x.Child);
+
+                modelBuilder.Entity<SpacedRepetitionHistory>()
+                            .HasMany(x => x.SpacedRepetitionAttempts)
+                            .WithOne(x => x.SpacedRepetitionHistory)
+                            .HasForeignKey(x => x.SpacedRepetitionHistoryId)
+                            .OnDelete(DeleteBehavior.Restrict);
+
+                //modelBuilder.Entity<SpacedRepetitionAttempt>()
+                  //          .HasOne(x => x.SpacedRepetitionHistory)
+                    //        .WithMany(x => x.SpacedRepetitionAttempts)
+                      //      .HasForeignKey(x => x.SpacedRepetitionHistoryId);
+
+                modelBuilder.Entity<Note>()
+                            .HasOne(x => x.SpacedRepetitionHistory)
+                            .WithOne(x => x.Note);
             });
         }
 
         public DbSet<Note> Note { get; set; }
         public DbSet<NoteRelation> NoteRelation { get; set; }
+
+        public DbSet<SpacedRepetitionHistory> SpacedRepetitionHistories { get; set; }
+        public DbSet<SpacedRepetitionAttempt> SpacedRepetitionAttempts { get; set; }
     }
 }
