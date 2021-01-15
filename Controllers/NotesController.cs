@@ -35,17 +35,7 @@ namespace Noting.Controllers
 
             if (note == null) return NotFound();
 
-            var relations = from noteRel in _context.NoteRelation
-                            where noteRel.ParentId == id
-                            join n in _context.Note on noteRel.ChildId equals n.Id
-                            select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
-
-            //var relations = from noteRel in _context.NoteRelation
-            //                where noteRel.ParentId == id
-            //                select noteRel;
-
-            // ICollection<NoteRelation>
-            note.Children = await relations.ToListAsync();
+            note.Children = await GetLinkedNoteRelations(id);
 
             return View(note);
         }
@@ -155,6 +145,16 @@ namespace Noting.Controllers
         private bool NoteExists(string id)
         {
             return _context.Note.Any(e => e.Id == id);
+        }
+
+        async private Task<ICollection<NoteRelation>> GetLinkedNoteRelations(string id)
+        {
+            var relations = from noteRel in _context.NoteRelation
+                            where noteRel.ParentId == id
+                            join n in _context.Note on noteRel.ChildId equals n.Id
+                            select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
+            
+            return await relations.ToListAsync();
         }
     }
 }
