@@ -10,8 +10,8 @@ using Noting.Data;
 namespace Noting.Migrations
 {
     [DbContext(typeof(MvcNoteContext))]
-    [Migration("20210114163038_NewInit")]
-    partial class NewInit
+    [Migration("20210115121152_RemovedParentObjectAccessorFromNoteRelation")]
+    partial class RemovedParentObjectAccessorFromNoteRelation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace Noting.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.1");
+                .HasAnnotation("ProductVersion", "5.0.2");
 
             modelBuilder.Entity("Noting.Models.Note", b =>
                 {
@@ -55,18 +55,19 @@ namespace Noting.Migrations
 
             modelBuilder.Entity("Noting.Models.NoteRelation", b =>
                 {
-                    b.Property<string>("ParentId")
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ChildId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParentId1")
+                    b.Property<string>("ParentId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ParentId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ParentId1");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("NoteRelation");
                 });
@@ -76,16 +77,9 @@ namespace Noting.Migrations
                     b.HasOne("Noting.Models.Note", "Child")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Noting.Models.Note", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId1");
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Child");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Noting.Models.Note", b =>

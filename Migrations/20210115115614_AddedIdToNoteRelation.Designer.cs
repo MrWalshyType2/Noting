@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noting.Data;
 
 namespace Noting.Migrations
 {
     [DbContext(typeof(MvcNoteContext))]
-    partial class MvcNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20210115115614_AddedIdToNoteRelation")]
+    partial class AddedIdToNoteRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,19 +55,22 @@ namespace Noting.Migrations
 
             modelBuilder.Entity("Noting.Models.NoteRelation", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("ParentId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ChildId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParentId")
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ParentId1")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ParentId");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId1");
 
                     b.ToTable("NoteRelation");
                 });
@@ -75,9 +80,16 @@ namespace Noting.Migrations
                     b.HasOne("Noting.Models.Note", "Child")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Noting.Models.Note", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId1");
 
                     b.Navigation("Child");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Noting.Models.Note", b =>

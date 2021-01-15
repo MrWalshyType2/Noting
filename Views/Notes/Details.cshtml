@@ -57,50 +57,51 @@
     <h4>Children i.e. Related Notes</h4>
     <hr />
 
-    @foreach (var item in Model.Children)
+   @* @foreach (var item in Model.Children) *@
+    @foreach (int i in Enumerable.Range(0, Model.Children.Count))
     {
         <dl class="row">
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(item => item.Title)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(item => item.Title)
+                @Model.Children.ElementAt(i).Child.Title
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(item => item.Description)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(item => item.Description)
+                @Model.Children.ElementAt(i).Child.Description
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Topic)
+                @Html.DisplayNameFor(item => item.Topic)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Topic)
+                @Model.Children.ElementAt(i).Child.Topic
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Subtopic)
+                @Html.DisplayNameFor(item => item.Subtopic)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Subtopic)
+                @Model.Children.ElementAt(i).Child.Subtopic
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.AutomaticIdLinking)
+                @Html.DisplayNameFor(item => item.AutomaticIdLinking)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.AutomaticIdLinking)
+                @Model.Children.ElementAt(i).Child.AutomaticIdLinking
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CreatedAt)
+                @Html.DisplayNameFor(item => item.CreatedAt)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CreatedAt)
+                @Model.Children.ElementAt(i).Child.CreatedAt
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.LastModified)
+                @Html.DisplayNameFor(item => item.LastModified)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.LastModified)
+                @Model.Children.ElementAt(i).Child.LastModified
             </dd>
         </dl>
         <hr />

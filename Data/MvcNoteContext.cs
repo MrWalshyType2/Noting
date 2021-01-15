@@ -18,14 +18,18 @@ namespace Noting.Data
         {
             modelBuilder.Entity<Note>(note =>
             {
-                modelBuilder.Entity<NoteRelation>()
-                            .HasKey(x => new { x.ParentId });
+                //modelBuilder.Entity<NoteRelation>()
+                  //          .HasKey(x => new { x.ParentId });
 
                 modelBuilder.Entity<NoteRelation>() // NoteRelation
                             .HasOne(x => x.Child) // HasOne Child
                             .WithMany(x => x.Children) // WithMany Children
-                            .HasForeignKey(x => x.ParentId)
+                            .HasForeignKey(x => x.ChildId)
                             .OnDelete(DeleteBehavior.Restrict);
+
+                modelBuilder.Entity<Note>()
+                            .HasMany(x => x.Children)
+                            .WithOne(x => x.Child);
             });
         }
 

@@ -37,7 +37,12 @@ namespace Noting.Controllers
 
             var relations = from noteRel in _context.NoteRelation
                             where noteRel.ParentId == id
-                            select noteRel;
+                            join n in _context.Note on noteRel.ChildId equals n.Id
+                            select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
+
+            //var relations = from noteRel in _context.NoteRelation
+            //                where noteRel.ParentId == id
+            //                select noteRel;
 
             // ICollection<NoteRelation>
             note.Children = await relations.ToListAsync();
