@@ -12,13 +12,24 @@ namespace Noting.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
+
+        [Required]
         public string NoteId { get; set; }
+
+        [NotMapped]
         public Note Note { get; set; }
+
+        [Required]
+        [StringLength(256, MinimumLength = 1)]
         public string Question { get; set; }
 
+        [NotMapped]
         public ICollection<SpacedRepetitionAttempt> SpacedRepetitionAttempts { get; set; }
+        
         [NotMapped]
         public SpacedRepetitionAttempt LastAttempt { get; set; }
+        
+        [DataType(DataType.Date)]
         public DateTime NextScheduledAttempt { get; set; }
     }
 }
