@@ -22,6 +22,7 @@ namespace Noting.Models
         [StringLength(20480)]
         public string Description { get; set; }
 
+        [NotMapped]
         public ICollection<Keyword> Keywords { get; set; }
 
         [Required]

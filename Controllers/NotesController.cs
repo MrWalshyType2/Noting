@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Noting.Data;
 using Noting.Models;
 
@@ -59,15 +60,49 @@ namespace Noting.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Topic,Subtopic,AutomaticIdLinking,CreatedAt,LastModified")] Note note)
+        public async Task<IActionResult> Create([Bind("Keywords, Note")] CreatePageViewModel model)
         {
+            model.Note.CreatedAt = DateTime.Now;
+            model.Note.LastModified = DateTime.Now;
+
             if (ModelState.IsValid)
             {
-                _context.Add(note);
-                await _context.SaveChangesAsync();
+                var savedModel = await AddNoteToDb(model.Note);
+                
+                if (model.Keywords.Any())
+                {
+                    AddKeywordsToDbModel(model.Note, model.Keywords);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            return View(note);
+            return View(model);
+        }
+
+        async private void AddKeywordsToDbModel(Note note, ICollection<string> keywords)
+        {
+            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
+            foreach (var k in keywords)
+            {
+                _context.Keyword.Add(
+                    new Keyword
+                    {
+                        Name = k,
+                        NoteId = note.Id
+                    }
+                );
+            }
+            await _context.SaveChangesAsync();
+            await dbContextTransaction.CommitAsync();
+        }
+
+        async private Task<Note> AddNoteToDb(Note model)
+        {
+            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
+            var savedNoteEntry = _context.Note.Add(model);
+            await _context.SaveChangesAsync();
+            await dbContextTransaction.CommitAsync();
+
+            return model;
         }
 
         // GET: Notes/Edit/5
