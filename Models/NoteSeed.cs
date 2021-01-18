@@ -132,6 +132,27 @@ namespace Noting.Models
             );
 
             await noteContext.SaveChangesAsync();
+
+            noteContext.Keyword.AddRange(
+                new Keyword
+                {
+                    Name = "Project",
+                    NoteId = targetNote.Id
+                },
+                new Keyword
+                {
+                    Name = "Work",
+                    NoteId = targetNote.Id
+                },
+                new Keyword
+                {
+                    Name = "C#",
+                    NoteId = targetNote.Id
+                }
+            );
+
+            await noteContext.SaveChangesAsync();
+
             noteContextTransaction.Commit();
         }
     }

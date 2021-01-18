@@ -21,7 +21,8 @@ namespace Noting.Models
         [Required]
         [StringLength(20480)]
         public string Description { get; set; }
-        //public ICollection<Keyword> Keywords { get; set; }
+
+        public ICollection<Keyword> Keywords { get; set; }
 
         [Required]
         [StringLength(64, MinimumLength = 4)]

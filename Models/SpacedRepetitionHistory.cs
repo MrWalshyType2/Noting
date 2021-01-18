@@ -32,7 +32,6 @@ namespace Noting.Models
         [DataType(DataType.Date)]
         public DateTime NextScheduledAttempt { get; set; }
 
-        [Required]
         [Editable(false)]
         [DataType(DataType.Date)]
         public DateTime CreatedAt { get; set; }
