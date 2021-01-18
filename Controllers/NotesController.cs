@@ -43,6 +43,8 @@ namespace Noting.Controllers
                 note.SpacedRepetitionHistory.SpacedRepetitionAttempts = 
                     await GetAttemptsByHistoryId(note.SpacedRepetitionHistory.Id);
             }
+            note.Keywords = await GetKeywordsByNoteId(id);
+
             return View(note);
         }
 
@@ -155,12 +157,19 @@ namespace Noting.Controllers
 
         async private Task<ICollection<NoteRelation>> GetLinkedNoteRelations(string id)
         {
-            var relations = from noteRel in _context.NoteRelation
-                            where noteRel.ParentId == id
-                            join n in _context.Note on noteRel.ChildId equals n.Id
-                            select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
-            
-            return await relations.ToListAsync();
+            try
+            {
+                var relations = from noteRel in _context.NoteRelation
+                                where noteRel.ParentId == id
+                                join n in _context.Note on noteRel.ChildId equals n.Id
+                                select new NoteRelation { Child = n, ChildId = noteRel.ChildId, ParentId = noteRel.ParentId, Id = noteRel.Id };
+
+                return await relations.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         async private Task<ICollection<SpacedRepetitionAttempt>> GetAttemptsByHistoryId(string id)
@@ -195,6 +204,22 @@ namespace Noting.Controllers
             }
             catch (Exception e) { }
             return history;
+        }
+
+        async private Task<ICollection<Keyword>> GetKeywordsByNoteId(string id)
+        {
+            try
+            {
+                // Set keywords if any
+                var keywords = await (from keyword in _context.Keyword
+                                      where keyword.NoteId == id
+                                      select keyword).ToListAsync();
+                return keywords;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }
