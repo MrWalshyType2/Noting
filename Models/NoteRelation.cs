@@ -12,10 +12,15 @@ namespace Noting.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
+
+        [Required]
         public string ParentId { get; set; }
         //public Note Parent { get; set; }
 
+        [Required]
         public string ChildId { get; set; }
+
+        [NotMapped]
         public Note Child { get; set; }
     }
 }
