@@ -76,34 +76,7 @@ namespace Noting.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
-        }
-
-        async private void AddKeywordsToDbModel(Note note, ICollection<string> keywords)
-        {
-            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
-            foreach (var k in keywords)
-            {
-                _context.Keyword.Add(
-                    new Keyword
-                    {
-                        Name = k,
-                        NoteId = note.Id
-                    }
-                );
-            }
-            await _context.SaveChangesAsync();
-            await dbContextTransaction.CommitAsync();
-        }
-
-        async private Task<Note> AddNoteToDb(Note model)
-        {
-            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
-            var savedNoteEntry = _context.Note.Add(model);
-            await _context.SaveChangesAsync();
-            await dbContextTransaction.CommitAsync();
-
-            return model;
-        }
+        } 
 
         // GET: Notes/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -255,6 +228,33 @@ namespace Noting.Controllers
             {
                 return null;
             }
+        }
+
+        async private void AddKeywordsToDbModel(Note note, ICollection<string> keywords)
+        {
+            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
+            foreach (var k in keywords)
+            {
+                _context.Keyword.Add(
+                    new Keyword
+                    {
+                        Name = k,
+                        NoteId = note.Id
+                    }
+                );
+            }
+            await _context.SaveChangesAsync();
+            await dbContextTransaction.CommitAsync();
+        }
+
+        async private Task<Note> AddNoteToDb(Note model)
+        {
+            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
+            var savedNoteEntry = _context.Note.Add(model);
+            await _context.SaveChangesAsync();
+            await dbContextTransaction.CommitAsync();
+
+            return model;
         }
     }
 }

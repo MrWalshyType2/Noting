@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Note</h4>
+    <h3>Note</h3>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -52,59 +52,149 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastModified)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Keywords)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Keywords)
+        </dd>
     </dl>
-
-    <h4>Children i.e. Related Notes</h4>
-    <hr />
-
-   @* @foreach (var item in Model.Children) *@
-    @foreach (int i in Enumerable.Range(0, Model.Children.Count))
+    @if (Model.SpacedRepetitionHistory != null)
     {
+        <h4>Spaced Repetition History</h4>
+        <hr />
+        <h5>Question</h5>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.Title)
+                @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.Question)
             </dt>
             <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.Title
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.Description)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.Description
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.Topic)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.Topic
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.Subtopic)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.Subtopic
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.AutomaticIdLinking)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.AutomaticIdLinking
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.CreatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.CreatedAt
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(item => item.LastModified)
-            </dt>
-            <dd class="col-sm-10">
-                @Model.Children.ElementAt(i).Child.LastModified
+                @Html.DisplayFor(model => model.SpacedRepetitionHistory.Question)
             </dd>
         </dl>
+        <h5>Next Attempt</h5>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.NextScheduledAttempt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpacedRepetitionHistory.NextScheduledAttempt)
+            </dd>
+        </dl>
+        <h5>Last Attempt</h5>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.LastAttempt.AttemptDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpacedRepetitionHistory.LastAttempt.AttemptDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.LastAttempt.Correct)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpacedRepetitionHistory.LastAttempt.Correct)
+            </dd>
+        </dl>
+    }
+
+    @if (Model.Children.Count > 0 && Model.Children != null)
+    {
+        <h4>Children i.e. Related Notes</h4>
         <hr />
+        @* @foreach (var item in Model.Children) *@
+        @foreach (int i in Enumerable.Range(0, Model.Children.Count))
+        {
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.Title)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.Title
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.Description)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.Description
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.Topic)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.Topic
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.Subtopic)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.Subtopic
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.AutomaticIdLinking)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.AutomaticIdLinking
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.CreatedAt)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.CreatedAt
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(item => item.LastModified)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.LastModified
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Keywords)
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Children.ElementAt(i).Child.Keywords
+                </dd>
+            </dl>
+
+            @if (Model.Children.ElementAt(i).Child.SpacedRepetitionHistory != null)
+            {
+                <h4>Spaced Repetition History</h4>
+                <hr />
+                <h5>Question</h5>
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.Question)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Model.Children.ElementAt(i).Child.SpacedRepetitionHistory.Question
+                    </dd>
+                </dl>
+                <h5>Next Attempt</h5>
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.NextScheduledAttempt)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Model.Children.ElementAt(i).Child.SpacedRepetitionHistory.NextScheduledAttempt
+                    </dd>
+                </dl>
+                <h5>Last Attempt</h5>
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.LastAttempt.AttemptDate)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Model.Children.ElementAt(i).Child.SpacedRepetitionHistory.LastAttempt.AttemptDate
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.SpacedRepetitionHistory.LastAttempt.Correct)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Model.Children.ElementAt(i).Child.SpacedRepetitionHistory.LastAttempt.Correct
+                    </dd>
+                </dl>
+            }
+        }
     }
 </div>
 <div>
