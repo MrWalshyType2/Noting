@@ -104,6 +104,7 @@ namespace Noting.Models
                     NoteId = targetNote.Id,
                     NextScheduledAttempt = DateTime.Now.Date,
                     Question = "What is the x of n?",
+                    CreatedAt = DateTime.Parse("01/01/2021")
                 }
             );
 
