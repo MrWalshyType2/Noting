@@ -25,9 +25,35 @@ namespace Noting.Models
 
         [NotMapped]
         public ICollection<SpacedRepetitionAttempt> SpacedRepetitionAttempts { get; set; }
-        
+
         [NotMapped]
-        public SpacedRepetitionAttempt LastAttempt { get; set; }
+        private SpacedRepetitionAttempt lastAttempt;
+
+        [NotMapped]
+        public SpacedRepetitionAttempt LastAttempt 
+        { 
+            get 
+            {
+                List<SpacedRepetitionAttempt> attempts = null;
+                SpacedRepetitionAttempt lastAttempt = null;
+                var attemptQuery = from a in SpacedRepetitionAttempts
+                                   orderby a.AttemptDate descending
+                                   select a;
+
+                if (attemptQuery.Any())
+                {
+                    attempts = attemptQuery.ToList();
+                    lastAttempt = attempts[0];
+                    this.lastAttempt = lastAttempt;
+                    return this.lastAttempt;
+                }
+                return null;
+            }
+            set
+            {
+                this.lastAttempt = value;
+            }
+        }
         
         [DataType(DataType.Date)]
         public DateTime NextScheduledAttempt { get; set; }
