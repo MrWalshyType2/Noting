@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Noting.Models
 {
-    public class CreatePageViewModel
+    public class NotePageViewModel
     {
         public ICollection<string> Keywords { get; set; }
         public Note Note { get; set; }

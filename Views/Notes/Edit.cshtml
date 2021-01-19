@@ -1,4 +1,4 @@
-﻿@model Noting.Models.Note
+﻿@model Noting.Models.NotePageViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,41 +12,41 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Note.Id" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <label asp-for="Note.Title" class="control-label"></label>
+                <input asp-for="Note.Title" class="form-control" />
+                <span asp-validation-for="Note.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Note.Description" class="control-label"></label>
+                <input asp-for="Note.Description" class="form-control" />
+                <span asp-validation-for="Note.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Topic" class="control-label"></label>
-                <input asp-for="Topic" class="form-control" />
-                <span asp-validation-for="Topic" class="text-danger"></span>
+                <label asp-for="Note.Topic" class="control-label"></label>
+                <input asp-for="Note.Topic" class="form-control" />
+                <span asp-validation-for="Note.Topic" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Subtopic" class="control-label"></label>
-                <input asp-for="Subtopic" class="form-control" />
-                <span asp-validation-for="Subtopic" class="text-danger"></span>
+                <label asp-for="Note.Subtopic" class="control-label"></label>
+                <input asp-for="Note.Subtopic" class="form-control" />
+                <span asp-validation-for="Note.Subtopic" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="AutomaticIdLinking" /> @Html.DisplayNameFor(model => model.AutomaticIdLinking)
+                    <input class="form-check-input" asp-for="Note.AutomaticIdLinking" /> @Html.DisplayNameFor(model => model.Note.AutomaticIdLinking)
                 </label>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastModified" class="control-label"></label>
-                <input asp-for="LastModified" class="form-control" />
-                <span asp-validation-for="LastModified" class="text-danger"></span>
+            <button id="AddKeywordBtn" type="button">Add-Keyword</button>
+            <div id="kwCont">
+                @foreach (var item in Model.Keywords)
+                {
+                    <div class="form-group">
+                        <label asp-for="Keywords" class="control-label"></label>
+                        <input asp-for="Keywords" class="form-control" value="@item.ToString()" />
+                    </div>
+                }
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -61,4 +61,29 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $("#AddKeywordBtn").on('click', () => {
+            console.log("Yeeeet");
+            // kw = keyword
+            let kwContainer = document.querySelector("#kwCont");
+
+            let newKw = document.createElement("div");
+            newKw.className = "form-group";
+
+            let kwLabel = document.createElement("label");
+            kwLabel.className = "control-label";
+            kwLabel.setAttribute("for", "Keywords");
+
+            let kwInput = document.createElement("input");
+            kwInput.className = "form-control";
+            kwInput.name = "Keywords";
+            kwInput.setAttribute("aria-invalid", "false");
+            kwInput.type = "text";
+
+            newKw.appendChild(kwLabel);
+            newKw.appendChild(kwInput);
+            kwContainer.appendChild(newKw);
+        });
+    </script>
 }

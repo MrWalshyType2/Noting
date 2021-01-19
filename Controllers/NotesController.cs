@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace Noting.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Keywords, Note")] CreatePageViewModel model)
+        public async Task<IActionResult> Create([Bind("Keywords, Note")] NotePageViewModel model)
         {
             model.Note.CreatedAt = DateTime.Now;
             model.Note.LastModified = DateTime.Now;
@@ -91,7 +92,17 @@ namespace Noting.Controllers
             {
                 return NotFound();
             }
-            return View(note);
+
+            var keywords = await GetKeywordsByNoteId(id);
+            if (keywords != null) note.Keywords = keywords;
+
+            var model = new NotePageViewModel
+            {
+                Note = note,
+                Keywords = (from kw in keywords select kw.Name).ToList()
+            };
+
+            return View(model);
         }
 
         // POST: Notes/Edit/5
@@ -99,9 +110,9 @@ namespace Noting.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,Description,Topic,Subtopic,AutomaticIdLinking,CreatedAt,LastModified")] Note note)
+        public async Task<IActionResult> Edit(string id, [Bind("Keywords, Note")] NotePageViewModel model)
         {
-            if (id != note.Id)
+            if (id != model.Note.Id)
             {
                 return NotFound();
             }
@@ -110,12 +121,28 @@ namespace Noting.Controllers
             {
                 try
                 {
-                    _context.Update(note);
+                    // Get keys already present for note
+                    var keywordsInDb = await GetKeywordsByNoteId(id);
+                    var strKeysInDb = from key in keywordsInDb
+                                      select key.Name.ToUpper();
+
+                    // Create list to hold the keys not in the db
+                    ICollection<string> keywordsToSave = new List<string>();
+
+                    foreach (var item in model.Keywords)
+                    {
+                        // Add a key to the save list if
+                        if (!(strKeysInDb.Contains(item.ToUpper()))) keywordsToSave.Add(item);
+                    }
+                    // If save list has a count greater than 0, add the keywords to the db
+                    if (keywordsToSave.Count > 0) AddKeywordsToDbModel(model.Note, keywordsToSave);
+
+                    _context.Update(model.Note);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NoteExists(note.Id))
+                    if (!NoteExists(model.Note.Id))
                     {
                         return NotFound();
                     }
@@ -126,7 +153,7 @@ namespace Noting.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(note);
+            return View(model.Note);
         }
 
         // GET: Notes/Delete/5
