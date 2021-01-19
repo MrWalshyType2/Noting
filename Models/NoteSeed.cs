@@ -62,6 +62,7 @@ namespace Noting.Models
                                select note).ToList();
 
             var targetNote = projectNotes[0];
+            var targetNote2 = projectNotes[1];
 
             noteContext.NoteRelation.AddRange(
                 new NoteRelation
@@ -148,6 +149,21 @@ namespace Noting.Models
                 {
                     Name = "C#",
                     NoteId = targetNote.Id
+                }
+            );
+
+            await noteContext.SaveChangesAsync();
+
+            noteContext.NoteBoxRelations.AddRange(
+                new NoteBoxRelation
+                {
+                    Level = Level.ONE,
+                    NoteId = targetNote.Id
+                },
+                new NoteBoxRelation
+                {
+                    Level = Level.THREE,
+                    NoteId = targetNote2.Id
                 }
             );
 

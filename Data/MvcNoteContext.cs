@@ -55,5 +55,7 @@ namespace Noting.Data
         public DbSet<SpacedRepetitionAttempt> SpacedRepetitionAttempts { get; set; }
 
         public DbSet<Keyword> Keyword { get; set; }
+
+        public DbSet<NoteBoxRelation> NoteBoxRelations { get; set; }
     }
 }

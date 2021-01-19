@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<Noting.Models.NoteBox>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Spaced Repetition</h1>
+<p class="lead">Repeating for the future</p>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Note Title</th>
+                <th>Box</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var box in Model)
+            {
+                @foreach (var note in box.Notes)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => note.Note.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => note.Level)
+                        </td>
+                        <td>
+                            <a asp-controller="Notes" asp-action="Edit" asp-route-id="@note.Note.Id">Edit</a> |
+                            <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.Note.Id">Details</a> |
+                            <a asp-controller="Notes" asp-action="Delete" asp-route-id="@note.Note.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+        </table>
+    </div>
