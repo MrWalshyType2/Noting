@@ -1,4 +1,5 @@
 ﻿using Noting.Models;
+using Noting.Models.Factories.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Noting.Services
 {
-    interface INoteService
+    public interface INoteService<T> where T : AbstractNote
     {
-        public Task GetAll();
+        public Task<ICollection<T>> GetAll();
         public Task GetDetails(string id);
         public Task CreateNote(NotePageViewModel model);
         public Task CreateNote(Note model);

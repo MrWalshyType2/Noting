@@ -10,22 +10,25 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Noting.Data;
 using Noting.Models;
 using Noting.Models.Builders;
+using Noting.Services;
 
 namespace Noting.Controllers
 {
     public class NotesController : Controller
     {
         private readonly MvcNoteContext _context;
+        private readonly INoteService<Note> _noteService;
 
-        public NotesController(MvcNoteContext context)
+        public NotesController(MvcNoteContext context, INoteService<Note> noteService)
         {
             _context = context;
+            _noteService = noteService;
         }
 
         // GET: Notes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Note.ToListAsync());
+            return View(await _noteService.GetAll());
         }
 
         // GET: Notes/Details/5
