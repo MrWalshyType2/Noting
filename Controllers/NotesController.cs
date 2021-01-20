@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Noting.Data;
 using Noting.Models;
+using Noting.Models.Builders;
 
 namespace Noting.Controllers
 {
@@ -32,22 +33,29 @@ namespace Noting.Controllers
         {
             // Check if 'id' is not null, and that a 'note' can be found in the DB
             if (id == null) return NotFound();
-            var note = await _context.Note
+            NoteBuilder note = await _context.Note
                                      .FirstOrDefaultAsync(m => m.Id == id);
             if (note == null) return NotFound();
 
-            // Set children and spaced repetition history
-            note.Children = await GetLinkedNoteRelations(id);
-            note.SpacedRepetitionHistory = await GetHistoryByNoteId(id);
-            if (note.SpacedRepetitionHistory != null)
+            // Set children
+            var linkedRelations = await GetLinkedNoteRelations(id);
+            note.HasChildren(linkedRelations);
+
+            // Set spaced repetition history
+            var history = await GetHistoryByNoteId(id);
+            //note.WithSpacedRepetitionHistory(history); 
+
+            // If there is a SpacedRepetitionHistory
+            if (history != null)
             {
                 // Set the spaced repetition histories attempts
-                note.SpacedRepetitionHistory.SpacedRepetitionAttempts = 
-                    await GetAttemptsByHistoryId(note.SpacedRepetitionHistory.Id);
+                history.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(history.Id);
+                note.WithSpacedRepetitionHistory(history);
             }
-            note.Keywords = await GetKeywordsByNoteId(id);
+            var keywords = await GetKeywordsByNoteId(id);
+            note.WithKeywords(keywords);
 
-            return View(note);
+            return View(note.BuildNote());
         }
 
         // GET: Notes/Create

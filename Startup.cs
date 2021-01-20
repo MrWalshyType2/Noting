@@ -53,10 +53,17 @@ namespace Noting
 
             app.UseEndpoints(endpoints =>
             {
+                /*
                 endpoints.MapControllerRoute(
-                    name: "Start",
-                    pattern: "{controller=SpacedRepetition}/{action=Start}/{level}"
+                    name: "SpacedRepetition",
+                    pattern: "{controller=SpacedRepetition}/{action=Index}/{level}"
                 );
+
+                endpoints.MapControllerRoute(
+                    name: "Notes",
+                    pattern: "{controller=Notes}/{action=Index}/{id?}"
+                );
+                */
 
                 endpoints.MapControllerRoute(
                     name: "default",

@@ -47,8 +47,8 @@ namespace Noting.Data
                             .WithOne(x => x.Note);
             });
 
-            modelBuilder.Entity<NoteBox>()
-                        .HasNoKey();
+            //modelBuilder.Entity<NoteBox>()
+              //          .HasNoKey();
         }
 
         public DbSet<Note> Note { get; set; }

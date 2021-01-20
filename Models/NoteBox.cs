@@ -8,6 +8,7 @@ using Noting.Data;
 
 namespace Noting.Models
 {
+    [NotMapped]
     public class NoteBox
     {
 
@@ -19,6 +20,7 @@ namespace Noting.Models
         [NotMapped]
         public ICollection<NoteBoxRelation> Notes { get; set; }
 
+        [NotMapped]
         public Level Level { get; set; }
 
     }
