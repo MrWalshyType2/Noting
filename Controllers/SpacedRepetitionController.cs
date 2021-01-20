@@ -22,37 +22,65 @@ namespace Noting.Controllers
         public async Task<IActionResult> Index()
         {
             // Setup five levels of note box
-            ICollection<NoteBox> noteBoxes = new List<NoteBox>();
-            for (int i = 0; i < 5; i++)
-            {
-                noteBoxes.Add(new NoteBox { Level = (Level)i, Notes = new List<NoteBoxRelation>() });
-            }
+            ICollection<NoteBox> noteBoxes = SetupBoxes(5);
 
             if (!(_context.NoteBoxRelations.Any())) return View(noteBoxes);
 
-            // Get all NoteBoxRelation objects in DB
-            var noteBoxRelations = await (from rel in _context.NoteBoxRelations
-                                          select rel).ToListAsync();
+            // Add relations to the NoteBox collection
+            await AddRelationsToNoteBoxes(noteBoxes);
 
-            for (int i = 0; i < noteBoxRelations.Count; i++)
+            return View(noteBoxes);
+        }
+
+        async private Task AddRelationsToNoteBoxes(ICollection<NoteBox> noteBoxes)
+        {
+            try
             {
-                // Set the Note property on each relation
-                noteBoxRelations[i].Note = 
-                    await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId);
+                // Get all NoteBoxRelation objects in DB
+                var noteBoxRelations = await (from rel in _context.NoteBoxRelations
+                                              select rel).ToListAsync();
 
-                // for each note box
-                for (int j = 0; j < noteBoxes.Count; j++)
+                // for each NoteBoxRelation
+                for (int i = 0; i < noteBoxRelations.Count; i++)
                 {
-                    // if the boxes level matches the relations level
-                    if (noteBoxes.ElementAt(j).Level == noteBoxRelations[i].Level)
+                    // Set the Note property on each relation
+                    noteBoxRelations[i].Note =
+                        await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId);
+
+                    // for each NoteBox
+                    for (int j = 0; j < noteBoxes.Count; j++)
                     {
-                        // add the note relation to the box
-                        noteBoxes.ElementAt(j).Notes.Add(noteBoxRelations[i]);
+                        // Add relation to NoteBox
+                        TryAddRelationToNoteBox(noteBoxes.ElementAt(j), noteBoxRelations[i]);
+
                     }
                 }
             }
+            catch (Exception e)
+            {
+                noteBoxes = SetupBoxes(5);
+            }
+        }
 
-            return View(noteBoxes);
+        private void TryAddRelationToNoteBox(NoteBox noteBox, NoteBoxRelation noteBoxRelation)
+        {
+            // if the NoteBox Level matches the NoteBoxRelations Level
+            if (noteBox.Level == noteBoxRelation.Level)
+            {
+                // add the NoteBoxRelation to the NoteBox
+                noteBox.Notes
+                       .Add(noteBoxRelation);
+            }
+        }
+
+        private ICollection<NoteBox> SetupBoxes(int v)
+        {
+            var noteBoxes = new List<NoteBox>();
+            for (int i = 0; i < v; i++)
+            {
+                noteBoxes.Add(new NoteBox { Level = (Level)i, Notes = new List<NoteBoxRelation>() });
+            }
+            return noteBoxes;
         }
 
         private protected void AddRepetitionAttempt(string noteId, SpacedRepetitionAttempt spacedRepetitionAttempt)
