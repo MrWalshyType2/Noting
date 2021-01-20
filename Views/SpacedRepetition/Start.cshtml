@@ -1,0 +1,51 @@
+﻿@model Noting.Models.NoteBox
+
+@{
+    ViewData["Title"] = "Start attempt";
+}
+
+<h1>Spaced Repetition</h1>
+<h3 class="lead">Box @Model.Level.ToString().ToLower()</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var note in Model.Notes) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => note.Note.Title)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Notes", new { id = note.NoteId }) |
+                @Html.ActionLink("Details", "Notes", new { id = note.NoteId }) |
+                @Html.ActionLink("Delete", "Notes", new { id = note.NoteId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<form asp-action="Attempt">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @foreach (var note in Model.Notes)
+    {
+        <h4>@note.Note.Title</h4>
+        <h5>@note.Note.SpacedRepetitionHistory.Question</h5>
+        <div class="form-group form-check">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" for="Correct" /> Was your answer correct?
+            </label>
+        </div>
+        <input type="hidden" for="SpacedRepetitionHistoryId" value="@note.Note.SpacedRepetitionHistory.Id" />
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    }
+</form>

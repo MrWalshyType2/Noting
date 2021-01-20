@@ -46,6 +46,9 @@ namespace Noting.Data
                             .HasOne(x => x.SpacedRepetitionHistory)
                             .WithOne(x => x.Note);
             });
+
+            modelBuilder.Entity<NoteBox>()
+                        .HasNoKey();
         }
 
         public DbSet<Note> Note { get; set; }

@@ -53,6 +53,40 @@ namespace Noting.Controllers
             return View(attempt);
         }
 
+        // GET: Start/:level
+        public async Task<IActionResult> Start(string level)
+        {
+            level = level.ToUpper();
+            // Validity checks
+            if (!Enum.IsDefined(typeof(Level), level)) return NotFound();
+            if (!_context.NoteBoxRelations.Any()) return NotFound();
+
+            // Get all NoteBoxRelation's where the Level matches the passed in Level
+            var noteBoxRelations = await (from noteBoxRelation in _context.NoteBoxRelations
+                                          where noteBoxRelation.Level == (Level) Enum.Parse(typeof(Level), level)
+                                          select noteBoxRelation).ToListAsync();
+            NoteBox notesBox = new NoteBox 
+            { 
+                Level = (Level) Enum.Parse(typeof(Level), level),
+                Notes = new List<NoteBoxRelation>()
+            };
+
+            foreach (var rel in noteBoxRelations)
+            {
+                // Get the note
+                rel.Note = await _context.Note.FirstOrDefaultAsync(m => m.Id == rel.NoteId);
+                
+                // Add the notes history
+                rel.Note.SpacedRepetitionHistory = await GetHistoryByNoteId(rel.NoteId);
+                rel.Note.SpacedRepetitionHistory.SpacedRepetitionAttempts =
+                    await GetAttemptsByHistoryId(rel.Note.SpacedRepetitionHistory.Id);
+                
+                // Add the NoteBoxRelation to the notesBox
+                notesBox.Notes.Add(rel);
+            }
+            return View(notesBox);
+        }
+
         // POST: Attempt
         [HttpPost]
         [ValidateAntiForgeryToken]

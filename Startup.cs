@@ -54,6 +54,11 @@ namespace Noting
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "Start",
+                    pattern: "{controller=SpacedRepetition}/{action=Start}/{level}"
+                );
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
