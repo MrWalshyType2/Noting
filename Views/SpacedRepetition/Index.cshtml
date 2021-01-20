@@ -31,6 +31,12 @@
                             @Html.DisplayFor(model => note.Level)
                         </td>
                         <td>
+                            @if (note.Note.SpacedRepetitionHistory != null)
+                            {
+                                <a asp-controller="SpacedRepetition" asp-action="History" asp-route-id="@note.Note.SpacedRepetitionHistory.Id">
+                                    History
+                                </a>
+                            }
                             <a asp-controller="Notes" asp-action="Edit" asp-route-id="@note.Note.Id">Edit</a> |
                             <a asp-controller="Notes" asp-action="Details" asp-route-id="@note.Note.Id">Details</a> |
                             <a asp-controller="Notes" asp-action="Delete" asp-route-id="@note.Note.Id">Delete</a>

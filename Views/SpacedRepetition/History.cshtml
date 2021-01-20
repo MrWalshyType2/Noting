@@ -1,0 +1,63 @@
+﻿@model Noting.Models.SpacedRepetitionHistory
+
+@{
+    ViewData["Title"] = "History";
+}
+
+<h1>History</h1>
+
+<div>
+    <h4>Spaced Repetition History</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Note.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Note.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Question)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Question)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NextScheduledAttempt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NextScheduledAttempt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+    </dl>
+
+    <h4>Attempts</h4>
+    @foreach (var attempt in Model.SpacedRepetitionAttempts)
+    {
+        <dl>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => attempt.AttemptDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => attempt.AttemptDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => attempt.Correct)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => attempt.Correct)
+            </dd>
+        </dl>
+        <a asp-action="Attempt" asp-route-id="@attempt.Id">Edit</a>
+        <hr />
+    }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

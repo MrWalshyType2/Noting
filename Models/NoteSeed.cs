@@ -99,13 +99,20 @@ namespace Noting.Models
 
             await noteContext.SaveChangesAsync();
 
-            noteContext.SpacedRepetitionHistories.Add(
+            noteContext.SpacedRepetitionHistories.AddRange(
                 new SpacedRepetitionHistory
                 {
                     NoteId = targetNote.Id,
                     NextScheduledAttempt = DateTime.Now.Date,
                     Question = "What is the x of n?",
                     CreatedAt = DateTime.Parse("01/01/2021")
+                },
+                new SpacedRepetitionHistory
+                {
+                    NoteId = targetNote2.Id,
+                    NextScheduledAttempt = DateTime.Now.Date,
+                    Question = "What is the x of n?",
+                    CreatedAt = DateTime.Parse("03/01/2021")
                 }
             );
 
@@ -114,8 +121,12 @@ namespace Noting.Models
             var noteRepHistQuery = from n in noteContext.SpacedRepetitionHistories
                                    where n.NoteId == targetNote.Id
                                    select n;
+            var noteRepHistQuery2 = from n in noteContext.SpacedRepetitionHistories
+                                   where n.NoteId == targetNote2.Id
+                                   select n;
 
             var noteRepHist = (await noteRepHistQuery.ToListAsync())[0];
+            var noteRepHist2 = (await noteRepHistQuery2.ToListAsync())[0];
 
             noteContext.SpacedRepetitionAttempts.AddRange(
                 new SpacedRepetitionAttempt
@@ -129,6 +140,18 @@ namespace Noting.Models
                     SpacedRepetitionHistoryId = noteRepHist.Id,
                     AttemptDate = DateTime.Parse("07/01/2021"),
                     Correct = true
+                },
+                new SpacedRepetitionAttempt
+                {
+                    SpacedRepetitionHistoryId = noteRepHist2.Id,
+                    AttemptDate = DateTime.Parse("02/01/2021"),
+                    Correct = true
+                },
+                new SpacedRepetitionAttempt
+                {
+                    SpacedRepetitionHistoryId = noteRepHist2.Id,
+                    AttemptDate = DateTime.Parse("04/01/2021"),
+                    Correct = false
                 }
             );
 
