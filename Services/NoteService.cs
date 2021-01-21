@@ -18,27 +18,69 @@ namespace Noting.Services
         {
             _context = context;
         }
-        public Task CreateNote(NotePageViewModel model)
+        public async Task<bool> CreateNote(NotePageViewModel model)
+        {
+            var noteDidSave = await AddNoteToDb(model.Note);
+
+            if (noteDidSave)
+            {
+                if (model.Keywords.Any())
+                {
+                    await AddKeywordsToDbModel(model.Note, model.Keywords);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public Task<bool> CreateNote(Note model)
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateNote(Note model)
+        public Task<bool> DeleteNote(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteNote(string id)
+        public async Task<bool> EditNote(string id, NotePageViewModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Get keys already present for note
+                var keywordsInDb = await GetKeywordsByNoteId(id);
+                var strKeysInDb = from key in keywordsInDb
+                                  select key.Name.ToUpper();
+
+                // Create list to hold the keys not in the db
+                ICollection<string> keywordsToSave = new List<string>();
+
+                foreach (var item in model.Keywords)
+                {
+                    // Add a key to the save list if
+                    if (!(strKeysInDb.Contains(item.ToUpper()))) keywordsToSave.Add(item);
+                }
+                // If save list has a count greater than 0, add the keywords to the db
+                if (keywordsToSave.Count > 0) await AddKeywordsToDbModel(model.Note, keywordsToSave);
+
+                _context.Update(model.Note);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!NoteExists(model.Note.Id))
+                {
+                    return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
-        public Task EditNote(string id, NotePageViewModel model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task EditNote(string id, Note model)
+        public Task<bool> EditNote(string id, Note model)
         {
             throw new NotImplementedException();
         }
@@ -149,7 +191,7 @@ namespace Noting.Services
             }
         }
 
-        async private void AddKeywordsToDbModel(Note note, ICollection<string> keywords)
+        async private Task AddKeywordsToDbModel(Note note, ICollection<string> keywords)
         {
             using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
             foreach (var k in keywords)
@@ -166,14 +208,20 @@ namespace Noting.Services
             await dbContextTransaction.CommitAsync();
         }
 
-        async private Task<Note> AddNoteToDb(Note model)
+        async private Task<bool> AddNoteToDb(Note model)
         {
-            using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
-            var savedNoteEntry = _context.Note.Add(model);
-            await _context.SaveChangesAsync();
-            await dbContextTransaction.CommitAsync();
-
-            return model;
+            try
+            {
+                using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync();
+                var savedNoteEntry = _context.Note.Add(model);
+                await _context.SaveChangesAsync();
+                await dbContextTransaction.CommitAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

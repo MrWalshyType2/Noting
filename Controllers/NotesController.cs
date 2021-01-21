@@ -58,13 +58,10 @@ namespace Noting.Controllers
 
             if (ModelState.IsValid)
             {
-                var savedModel = await AddNoteToDb(model.Note);
-                
-                if (model.Keywords.Any())
+                if (await _noteService.CreateNote(model))
                 {
-                    AddKeywordsToDbModel(model.Note, model.Keywords);
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(model);
         } 
@@ -72,24 +69,16 @@ namespace Noting.Controllers
         // GET: Notes/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var note = await _context.Note.FindAsync(id);
-            if (note == null)
-            {
-                return NotFound();
-            }
-
-            var keywords = await GetKeywordsByNoteId(id);
-            if (keywords != null) note.Keywords = keywords;
+            var note = await _noteService.GetDetails(id);
+            if (note == null) return NotFound();
 
             var model = new NotePageViewModel
             {
                 Note = note,
-                Keywords = (from kw in keywords select kw.Name).ToList()
+                Keywords = note.Keywords.Any() ?
+                            (from kw in note.Keywords select kw.Name).ToList()
+                            :
+                            new List<string>()
             };
 
             return View(model);
@@ -109,39 +98,11 @@ namespace Noting.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var noteEditSuccess = await _noteService.EditNote(id, model);
+                if (noteEditSuccess == true)
                 {
-                    // Get keys already present for note
-                    var keywordsInDb = await GetKeywordsByNoteId(id);
-                    var strKeysInDb = from key in keywordsInDb
-                                      select key.Name.ToUpper();
-
-                    // Create list to hold the keys not in the db
-                    ICollection<string> keywordsToSave = new List<string>();
-
-                    foreach (var item in model.Keywords)
-                    {
-                        // Add a key to the save list if
-                        if (!(strKeysInDb.Contains(item.ToUpper()))) keywordsToSave.Add(item);
-                    }
-                    // If save list has a count greater than 0, add the keywords to the db
-                    if (keywordsToSave.Count > 0) AddKeywordsToDbModel(model.Note, keywordsToSave);
-
-                    _context.Update(model.Note);
-                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NoteExists(model.Note.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
             return View(model.Note);
         }

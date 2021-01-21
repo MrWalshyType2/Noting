@@ -11,10 +11,10 @@ namespace Noting.Services
     {
         public Task<ICollection<T>> GetAll();
         public Task<Note> GetDetails(string id);
-        public Task CreateNote(NotePageViewModel model);
-        public Task CreateNote(Note model);
-        public Task EditNote(string id, NotePageViewModel model);
-        public Task EditNote(string id, Note model);
-        public Task DeleteNote(string id);
+        public Task<bool> CreateNote(NotePageViewModel model);
+        public Task<bool> CreateNote(Note model);
+        public Task<bool> EditNote(string id, NotePageViewModel model);
+        public Task<bool> EditNote(string id, Note model);
+        public Task<bool> DeleteNote(string id);
     }
 }
