@@ -51,6 +51,10 @@ namespace Noting.Services
         {
             try
             {
+                if (id == null) return false;
+ 
+                model.Note.LastModified = DateTime.Now;
+
                 // Get keys already present for note
                 var keywordsInDb = await GetKeywordsByNoteId(id);
                 var strKeysInDb = from key in keywordsInDb
@@ -98,11 +102,11 @@ namespace Noting.Services
         {
             // Check if 'id' is not null, and that a 'note' can be found in the DB
             if (id == null) return null;
-            INoteBuilder<Note> note = (await _context.Note
+            INoteBuilder<Note> noteBuilder = (await _context.Note
                                              .FirstOrDefaultAsync(m => m.Id == id)).Builder();
-            if (note == null) return null;
+            if (noteBuilder == null) return null;
 
-            return _noteFactory.GetNote(note, 
+            return _noteFactory.GetNote(noteBuilder, 
                                         await GetLinkedNoteRelations(id),
                                         await GetHistoryWithAttemptsByNoteId(id),
                                         await GetKeywordsByNoteId(id));

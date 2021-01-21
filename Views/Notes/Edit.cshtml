@@ -13,6 +13,7 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Note.Id" />
+            <input type="hidden" asp-for="Note.CreatedAt" />
             <div class="form-group">
                 <label asp-for="Note.Title" class="control-label"></label>
                 <input asp-for="Note.Title" class="form-control" />
@@ -38,14 +39,15 @@
                     <input class="form-check-input" asp-for="Note.AutomaticIdLinking" /> @Html.DisplayNameFor(model => model.Note.AutomaticIdLinking)
                 </label>
             </div>
-            <button id="AddKeywordBtn" type="button">Add-Keyword</button>
+            <button class="btn btn-primary" id="AddKeywordBtn" type="button">Add-Keyword</button>
             <div id="kwCont">
                 @foreach (var item in Model.Keywords)
                 {
-                    <div class="form-group">
-                        <label asp-for="Keywords" class="control-label"></label>
-                        <input asp-for="Keywords" class="form-control" value="@item.ToString()" />
-                    </div>
+                <div class="form-group">
+                    <label asp-for="Keywords" class="control-label"></label>
+                    <input asp-for="Keywords" class="form-control" value="@item.ToString()" />
+                    <button class="btn btn-danger" id="RemoveKeywordBtn" type="button">Remove-Keyword</button>
+                </div>
                 }
             </div>
             <div class="form-group">
