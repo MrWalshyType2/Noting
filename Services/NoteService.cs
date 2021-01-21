@@ -57,8 +57,8 @@ namespace Noting.Services
 
                 foreach (var item in model.Keywords)
                 {
-                    // Add a key to the save list if
-                    if (!(strKeysInDb.Contains(item.ToUpper()))) keywordsToSave.Add(item);
+                    // Add a key to the save list if the key is not already in the db
+                    if (!strKeysInDb.Contains(item.ToUpper())) keywordsToSave.Add(item);
                 }
                 // If save list has a count greater than 0, add the keywords to the db
                 if (keywordsToSave.Count > 0) await AddKeywordsToDbModel(model.Note, keywordsToSave);
