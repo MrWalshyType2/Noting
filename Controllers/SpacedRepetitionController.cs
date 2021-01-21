@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Noting.Data;
 using Noting.Models;
+using Noting.Models.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,21 +143,16 @@ namespace Noting.Controllers
                 // for each NoteBoxRelation
                 for (int i = 0; i < noteBoxRelations.Count; i++)
                 {
-                    // Set the Note property on each relation
-                    noteBoxRelations[i].Note =
-                        await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId);
+                    // Get the note for the current NoteBoxRelation
+                    NoteBuilder noteBuilder = await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId);
 
-                    //var h = from hist in _context.SpacedRepetitionHistories
-                    //      where hist.NoteId == noteBoxRelations[i].NoteId
-                    //    join att in _context.SpacedRepetitionAttempts on hist.Id equals att.SpacedRepetitionHistoryId
-                    //  select hist;
-
+                    // Get the history and add to the builder
                     var h = await GetHistoryByNoteId(noteBoxRelations[i].NoteId);
                     h.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(h.Id);
+                    noteBuilder.WithSpacedRepetitionHistory(h);
 
-                    // Set each Note properties history id
-                    noteBoxRelations[i].Note.SpacedRepetitionHistory = h;
-                        //await _context.SpacedRepetitionHistories.FirstOrDefaultAsync(m => m.NoteId == noteBoxRelations[i].NoteId);
+                    // Set the Note property on the NoteBoxRelation
+                    noteBoxRelations[i].Note = noteBuilder;
 
                     // for each NoteBox
                     for (int j = 0; j < noteBoxes.Count; j++)
