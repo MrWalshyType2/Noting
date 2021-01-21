@@ -14,38 +14,38 @@ namespace Noting.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public new string Id { get; set; }
+        public override string Id { get; set; }
 
         [Required]
         [StringLength(64, MinimumLength = 1)]
-        public new string Title { get; set; }
+        public override string Title { get; set; }
 
         [Required]
         [StringLength(20480)]
-        public new string Description { get; set; }
+        public override string Description { get; set; }
 
         [NotMapped]
-        public new ICollection<Keyword> Keywords { get; set; }
+        public override ICollection<Keyword> Keywords { get; set; }
 
         [Required]
         [StringLength(64, MinimumLength = 4)]
-        public new string Topic { get; set; }
-        public new string Subtopic { get; set; }
+        public override string Topic { get; set; }
+        public override string Subtopic { get; set; }
 
         [NotMapped]
-        public new SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
+        public override SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
 
         [Required]
-        public new bool AutomaticIdLinking { get; set; }
+        public override bool AutomaticIdLinking { get; set; }
 
         [NotMapped]
-        public new ICollection<NoteRelation> Children { get; set; }
+        public override ICollection<NoteRelation> Children { get; set; }
 
         [DataType(DataType.Date)]
-        public new DateTime CreatedAt { get; set; }
+        public override DateTime CreatedAt { get; set; }
 
         [DataType(DataType.Date)]
-        public new DateTime LastModified { get; set; }
+        public override DateTime LastModified { get; set; }
 
         public static implicit operator NoteBuilder(Note note)
         {

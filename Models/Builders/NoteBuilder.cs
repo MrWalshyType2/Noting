@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Noting.Models.Factories.Notes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Noting.Models.Builders
 {
-    public class NoteBuilder : INoteBuilder
+    public class NoteBuilder : INoteBuilder<Note>
     {
         private string _id;
         private string _title;
@@ -37,67 +38,67 @@ namespace Noting.Models.Builders
             };
         }
 
-        public INoteBuilder DateCreatedAt(DateTime dateTime)
+        public INoteBuilder<Note> DateCreatedAt(DateTime dateTime)
         {
             _createdAt = dateTime;
             return this;
         }
 
-        public INoteBuilder HasAutomaticIdLinking(bool automaticIdLinking)
+        public INoteBuilder<Note> HasAutomaticIdLinking(bool automaticIdLinking)
         {
             _automaticIdLinking = automaticIdLinking;
             return this;
         }
 
-        public INoteBuilder DateLastModified(DateTime dateTime)
+        public INoteBuilder<Note> DateLastModified(DateTime dateTime)
         {
             _lastModified = dateTime;
             return this;
         }
 
-        public INoteBuilder WithDescription(string description)
+        public INoteBuilder<Note> WithDescription(string description)
         {
             _description = description;
             return this;
         }
 
-        public INoteBuilder WithId(string id)
+        public INoteBuilder<Note> WithId(string id)
         {
             _id = id;
             return this;
         }
 
-        public INoteBuilder WithKeywords(ICollection<Keyword> keywords)
+        public INoteBuilder<Note> WithKeywords(ICollection<Keyword> keywords)
         {
             _keywords = keywords;
             return this;
         }
 
-        public INoteBuilder WithSpacedRepetitionHistory(SpacedRepetitionHistory spacedRepetitionHistory)
+        public INoteBuilder<Note> WithSpacedRepetitionHistory(SpacedRepetitionHistory spacedRepetitionHistory)
         {
             _spacedRepetitionHistory = spacedRepetitionHistory;
             return this;
         }
 
-        public INoteBuilder WithSubtopic(string subtopic)
+        public INoteBuilder<Note> WithSubtopic(string subtopic)
         {
             _subtopic = subtopic;
             return this;
         }
 
-        public INoteBuilder WithTitle(string title)
+        public INoteBuilder<Note> WithTitle(string title)
         {
             _title = title;
             return this;
         }
 
-        public INoteBuilder WithTopic(string topic)
+        public INoteBuilder<Note> WithTopic(string topic)
         {
             _topic = topic;
             return this;
         }
 
-        public INoteBuilder HasChildren(ICollection<NoteRelation> children)
+        public INoteBuilder<Note> HasChildren(ICollection<NoteRelation> children)
         {
             _children = children;
             return this;

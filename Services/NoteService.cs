@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Noting.Data;
 using Noting.Models;
 using Noting.Models.Builders;
+using Noting.Models.Factories.Notes;
+using Noting.Models.Factories.Notes.Factory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +15,12 @@ namespace Noting.Services
     public class NoteService : INoteService<Note>
     {
         private readonly MvcNoteContext _context;
+        private readonly IAbstractNoteFactory<Note> _noteFactory;
 
         public NoteService(MvcNoteContext context)
         {
             _context = context;
+            _noteFactory = new NoteFactory();
         }
         public async Task<bool> CreateNote(NotePageViewModel model)
         {
@@ -94,29 +98,14 @@ namespace Noting.Services
         {
             // Check if 'id' is not null, and that a 'note' can be found in the DB
             if (id == null) return null;
-            NoteBuilder note = await _context.Note
-                                     .FirstOrDefaultAsync(m => m.Id == id);
+            INoteBuilder<Note> note = (await _context.Note
+                                             .FirstOrDefaultAsync(m => m.Id == id)).Builder();
             if (note == null) return null;
 
-            // Set children
-            var linkedRelations = await GetLinkedNoteRelations(id);
-            note.HasChildren(linkedRelations);
-
-            // Set spaced repetition history
-            var history = await GetHistoryByNoteId(id);
-            //note.WithSpacedRepetitionHistory(history); 
-
-            // If there is a SpacedRepetitionHistory
-            if (history != null)
-            {
-                // Set the spaced repetition histories attempts
-                history.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(history.Id);
-                note.WithSpacedRepetitionHistory(history);
-            }
-            var keywords = await GetKeywordsByNoteId(id);
-            note.WithKeywords(keywords);
-
-            return note.BuildNote();
+            return _noteFactory.GetNote(note, 
+                                        await GetLinkedNoteRelations(id),
+                                        await GetHistoryWithAttemptsByNoteId(id),
+                                        await GetKeywordsByNoteId(id));
         }
 
         private bool NoteExists(string id)
@@ -170,6 +159,30 @@ namespace Noting.Services
                                        select h).ToListAsync();
                 }
                 history = histories.ElementAtOrDefault(0);
+            }
+            catch (Exception e) { }
+            return history;
+        }
+
+        async private Task<SpacedRepetitionHistory> GetHistoryWithAttemptsByNoteId(string id)
+        {
+            List<SpacedRepetitionHistory> histories = null;
+            SpacedRepetitionHistory history = null;
+            ICollection<SpacedRepetitionAttempt> attempts = null;
+            try
+            {
+                if (await _context.SpacedRepetitionHistories.AnyAsync())
+                {
+                    histories = await (from h in _context.SpacedRepetitionHistories
+                                       where h.NoteId == id
+                                       select h).ToListAsync();
+                }
+                history = histories.ElementAtOrDefault(0);
+
+                if (history != null)
+                {
+                    history.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(history.Id);
+                }
             }
             catch (Exception e) { }
             return history;

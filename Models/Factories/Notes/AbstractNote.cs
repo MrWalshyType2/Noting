@@ -7,17 +7,17 @@ namespace Noting.Models.Factories.Notes
 {
     public class AbstractNote
     {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public ICollection<Keyword> Keywords { get; set; }
-        public string Topic { get; set; }
-        public string Subtopic { get; set; }
-        public SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
-        public bool AutomaticIdLinking { get; set; }
-        public ICollection<NoteRelation> Children { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastModified { get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string Description { get; set; }
+        public virtual ICollection<Keyword> Keywords { get; set; }
+        public virtual string Topic { get; set; }
+        public virtual string Subtopic { get; set; }
+        public virtual SpacedRepetitionHistory SpacedRepetitionHistory { get; set; }
+        public virtual bool AutomaticIdLinking { get; set; }
+        public virtual ICollection<NoteRelation> Children { get; set; }
+        public virtual DateTime CreatedAt { get; set; }
+        public virtual DateTime LastModified { get; set; }
 
     }
 }

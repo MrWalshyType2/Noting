@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Noting.Models.Factories.Notes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Noting.Models.Builders
 {
-    public interface INoteBuilder
+    public interface INoteBuilder<T> where T:AbstractNote 
     {
-        INoteBuilder WithId(string id);
-        INoteBuilder WithTitle(string title);
-        INoteBuilder WithDescription(string description);
-        INoteBuilder WithKeywords(ICollection<Keyword> keywords);
-        INoteBuilder WithTopic(string topic);
-        INoteBuilder WithSubtopic(string subtopic);
-        INoteBuilder WithSpacedRepetitionHistory(SpacedRepetitionHistory spacedRepetitionHistory);
-        INoteBuilder HasAutomaticIdLinking(bool automaticIdLinking);
-        INoteBuilder DateCreatedAt(DateTime dateTime);
-        INoteBuilder DateLastModified(DateTime dateTime);
-        INoteBuilder HasChildren(ICollection<NoteRelation> children);
-        Note BuildNote();
+        INoteBuilder<T> WithId(string id);
+        INoteBuilder<T> WithTitle(string title);
+        INoteBuilder<T> WithDescription(string description);
+        INoteBuilder<T> WithKeywords(ICollection<Keyword> keywords);
+        INoteBuilder<T> WithTopic(string topic);
+        INoteBuilder<T> WithSubtopic(string subtopic);
+        INoteBuilder<T> WithSpacedRepetitionHistory(SpacedRepetitionHistory spacedRepetitionHistory);
+        INoteBuilder<T> HasAutomaticIdLinking(bool automaticIdLinking);
+        INoteBuilder<T> DateCreatedAt(DateTime dateTime);
+        INoteBuilder<T> DateLastModified(DateTime dateTime);
+        INoteBuilder<T> HasChildren(ICollection<NoteRelation> children);
+        T BuildNote();
     }
 }

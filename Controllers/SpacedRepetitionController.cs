@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Noting.Data;
 using Noting.Models;
@@ -144,7 +143,7 @@ namespace Noting.Controllers
                 for (int i = 0; i < noteBoxRelations.Count; i++)
                 {
                     // Get the note for the current NoteBoxRelation
-                    NoteBuilder noteBuilder = await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId);
+                    INoteBuilder<Note> noteBuilder = (await _context.Note.FirstOrDefaultAsync(n => n.Id == noteBoxRelations[i].NoteId)).Builder();
 
                     // Get the history and add to the builder
                     var h = await GetHistoryByNoteId(noteBoxRelations[i].NoteId);
@@ -152,7 +151,7 @@ namespace Noting.Controllers
                     noteBuilder.WithSpacedRepetitionHistory(h);
 
                     // Set the Note property on the NoteBoxRelation
-                    noteBoxRelations[i].Note = noteBuilder;
+                    noteBoxRelations[i].Note = noteBuilder.BuildNote();
 
                     // for each NoteBox
                     for (int j = 0; j < noteBoxes.Count; j++)

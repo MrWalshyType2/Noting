@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Noting.Models.Factories.Notes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,7 +18,7 @@ namespace Noting.Models
         public string NoteId { get; set; }
 
         [NotMapped]
-        public Note Note { get; set; }
+        public AbstractNote Note { get; set; }
 
         [Required]
         public Level Level { get; set; }
