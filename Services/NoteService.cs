@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using Noting.Data;
 using Noting.Models;
+using Noting.Models.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +48,33 @@ namespace Noting.Services
             return await _context.Note.ToListAsync();
         }
 
-        public Task GetDetails(string id)
+        async public Task<Note> GetDetails(string id)
         {
-            throw new NotImplementedException();
+            // Check if 'id' is not null, and that a 'note' can be found in the DB
+            if (id == null) return null;
+            NoteBuilder note = await _context.Note
+                                     .FirstOrDefaultAsync(m => m.Id == id);
+            if (note == null) return null;
+
+            // Set children
+            var linkedRelations = await GetLinkedNoteRelations(id);
+            note.HasChildren(linkedRelations);
+
+            // Set spaced repetition history
+            var history = await GetHistoryByNoteId(id);
+            //note.WithSpacedRepetitionHistory(history); 
+
+            // If there is a SpacedRepetitionHistory
+            if (history != null)
+            {
+                // Set the spaced repetition histories attempts
+                history.SpacedRepetitionAttempts = await GetAttemptsByHistoryId(history.Id);
+                note.WithSpacedRepetitionHistory(history);
+            }
+            var keywords = await GetKeywordsByNoteId(id);
+            note.WithKeywords(keywords);
+
+            return note.BuildNote();
         }
 
         private bool NoteExists(string id)

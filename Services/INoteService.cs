@@ -10,7 +10,7 @@ namespace Noting.Services
     public interface INoteService<T> where T : AbstractNote
     {
         public Task<ICollection<T>> GetAll();
-        public Task GetDetails(string id);
+        public Task<Note> GetDetails(string id);
         public Task CreateNote(NotePageViewModel model);
         public Task CreateNote(Note model);
         public Task EditNote(string id, NotePageViewModel model);
